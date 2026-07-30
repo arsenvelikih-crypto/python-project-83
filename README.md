@@ -1,4 +1,4 @@
-### Сылка на проект:
+### Ссылка на проект:
 https://python-project-83-op6q.onrender.com
 
 
