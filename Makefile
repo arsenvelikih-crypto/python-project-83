@@ -19,3 +19,7 @@ render-start:
 
 lint:
 	uv run ruff check .
+
+
+test:
+	PYTHONPATH=. uv run pytest

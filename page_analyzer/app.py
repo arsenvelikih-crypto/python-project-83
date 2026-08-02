@@ -13,10 +13,6 @@ app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 
 
 
-
-
-
-
 @app.route("/")
 def index():
-    return render_template("home.html")
+    return render_template("home.html", title="Анализатор страниц")

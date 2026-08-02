@@ -1,10 +1,43 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
+    <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bootstrap demo</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
     <title>Flask проект</title>
 </head>
-<h1>Эталонный проект по курсу Flask</h1>
 <body>
-<h1>Добро пожаловать на главную страницу!</h1>
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-light bg-dark content-left">
+            <div class="d-flex gap-3 ps-3">
+                <a class="nav-link link-light" href="/">Анализатор страниц</a>
+                <a class="nav-link link-light" href="/">Сайты</a>
+            </div>
+        </nav>
+    </header>
+    <div class="container mt-5	bg-light p-5 rounded">
+    <h1 class="display-4">{{ title }}</h1>
+    <h3 class="lead">Бесплатно проверяйте сайты на SEO пригодность</h3>
+    <form action="/urls" method="post">
+
+        <div class="input-group">
+            <input type="url"
+                class="form-control"
+                name="url"
+                placeholder="https://example.com"
+                required>
+            <button
+                class="btn btn-primary"
+                type="submit">
+                Проверить
+            </button>
+        </div>
+    </form>
+    </div>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
 </body>
 </html>
