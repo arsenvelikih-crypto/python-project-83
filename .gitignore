@@ -16,4 +16,4 @@ htmlcov/
 .vscode/
 .DS_Store
 *.tmp
-*.swp
+*.swp.python-version
