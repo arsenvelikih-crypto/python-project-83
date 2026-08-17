@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <title>Flask проект</title>
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-light bg-dark content-left">
+            <div class="d-flex gap-3 ps-3">
+                <a class="nav-link link-light" href="/">Анализатор страниц</a>
+                <a class="nav-link link-light" href="{{ url_for('get_urls') }}">Сайты</a>
+            </div>
+        </nav>
+    </header>
+<div class="container mt-1 p-1 rounded">
+<h1>Сайты</h1>
+<table data-test="urls" class="table w-100 border border-black p-3">
+    <thead>
+        <tr>
+            <th class="border border-black p-3">ID</th>
+            <th class="border border-black p-3">Имя</th>
+            <th class="border border-black p-3">Дата создания</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for url in urls %}
+            <tr>
+                <td class="border border-black p-3">{{ url[0] }}</td>
+                <td class="border border-black p-3"><a href="{{ url_for('show_url', id=url[0]) }}">{{ url[1] }}</a></td>
+                <td class="border border-black p-3">{{ url[2].strftime('%d.%m.%Y') }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+</body>
+</html>
