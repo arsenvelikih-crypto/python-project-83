@@ -17,7 +17,7 @@ load_dotenv()
 DATABASE_URL = os.getenv('DATABASE_URL')
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
-conn = psycopg.connect(DATABASE_URL)
+
 
 
 
@@ -30,22 +30,23 @@ def index():
         if validators.url(url):
             parsed_url = urlparse(url)
             name = parsed_url.netloc
-            with conn.cursor() as cur:
-                cur.execute(
-                    "SELECT id FROM urls WHERE name = %s",
-                            (name,)
-                )
-                existing_url = cur.fetchone()
-                if existing_url:
-                    flash("Сайт уже добавлен", "danger")
-                else:
+            with psycopg.connect(DATABASE_URL) as conn:
+                with conn.cursor() as cur:
                     cur.execute(
-                        "INSERT INTO urls (name, created_at) VALUES (%s, %s)", 
-                        (name, datetime.now())
-                        )
-                    flash("Страница успешно добавлена", "success")
-            conn.commit()
-            return redirect(url_for("index"))
+                        "SELECT id FROM urls WHERE name = %s",
+                                (name,)
+                    )
+                    existing_url = cur.fetchone()
+                    if existing_url:
+                        flash("Сайт уже добавлен", "danger")
+                    else:
+                        cur.execute(
+                            "INSERT INTO urls (name, created_at) VALUES (%s, %s)", 
+                            (name, datetime.now())
+                            )
+                        flash("Страница успешно добавлена", "success")
+                conn.commit()
+                return redirect(url_for("index"))
         else:
             flash("Ошибка добавления страницы", "danger")
     return render_template("home.html", title="Анализатор страниц")
@@ -55,9 +56,10 @@ def index():
 
 @app.route("/urls", methods=["GET"])
 def get_urls():
-    with conn.cursor() as cur:
-        cur.execute("SELECT * FROM urls ORDER BY created_at DESC")
-        urls = cur.fetchall()
+    with psycopg.connect(DATABASE_URL) as conn:
+        with conn.cursor() as cur:
+            cur.execute("SELECT * FROM urls ORDER BY created_at DESC")
+            urls = cur.fetchall()
     return render_template("urls.html", urls=urls, title="Список страниц")
 
 
@@ -65,13 +67,14 @@ def get_urls():
 
 @app.route("/urls/<int:id>", methods=["GET"])
 def show_url(id):
-    with conn.cursor() as cur:
-        cur.execute(
-            "SELECT id, name, created_at FROM urls WHERE id = %s",
-            (id,)
-        )
-        url = cur.fetchone()
-    return render_template("url.html", url=url)
+    with psycopg.connect(DATABASE_URL) as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                "SELECT id, name, created_at FROM urls WHERE id = %s",
+                (id,)
+            )
+            url = cur.fetchone()
+        return render_template("url.html", url=url)
 
 
 
