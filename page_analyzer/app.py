@@ -31,8 +31,9 @@ def post_url():
 
     if name:
         if url_exists(name):
-            flash("Страница уже существует", "danger")
-            return render_template("home.html", title="Анализатор страниц")
+            flash("Страница уже существует", "info")
+            _, existing_id = url_exists(name)
+            return redirect(url_for("show_url", id=existing_id))
 
         url_id = add_url_to_db(name)
         flash("Страница успешно добавлена", "success")

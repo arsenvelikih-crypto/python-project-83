@@ -28,7 +28,8 @@ def url_exists(name):
                 (name,)
             )
             existing_url = cur.fetchone()
-    return existing_url is not None
+            existing_id = existing_url[0] if existing_url else None
+    return existing_url is not None, existing_id
 
 
 
