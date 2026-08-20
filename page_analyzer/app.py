@@ -1,9 +1,6 @@
-import os
-from urllib.parse import urlparse
-from datetime import datetime
-import psycopg
-import validators
-from dotenv import load_dotenv
+from .url_validate import validate_and_normalize_url
+from .db import select_urls, select_url_by_id, add_url_to_db, url_exists
+from .config import SECRET_KEY
 from flask import (
     Flask,
     render_template,
@@ -13,68 +10,58 @@ from flask import (
     flash,
 )
 
-load_dotenv()
-DATABASE_URL = os.getenv('DATABASE_URL')
+
 app = Flask(__name__)
-app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
+app.config['SECRET_KEY'] = SECRET_KEY
 
 
 
-
-
-
-@app.route("/", methods=["GET", "POST"])
+# Главная страница
+@app.route("/", methods=["GET"])
 def index():
-    if request.method == "POST":
-        url = request.form["url"]
-        if validators.url(url):
-            parsed_url = urlparse(url)
-            name = parsed_url.netloc
-            with psycopg.connect(DATABASE_URL) as conn:
-                with conn.cursor() as cur:
-                    cur.execute(
-                        "SELECT id FROM urls WHERE name = %s",
-                                (name,)
-                    )
-                    existing_url = cur.fetchone()
-                    if existing_url:
-                        flash("Сайт уже добавлен", "danger")
-                    else:
-                        cur.execute(
-                            "INSERT INTO urls (name, created_at) VALUES (%s, %s)", 
-                            (name, datetime.now())
-                            )
-                        flash("Страница успешно добавлена", "success")
-                conn.commit()
-                return redirect(url_for("index"))
-        else:
-            flash("Ошибка добавления страницы", "danger")
     return render_template("home.html", title="Анализатор страниц")
 
 
 
+# Добавление URL
+@app.route("/urls", methods=["POST"])
+def post_url():
+    url = request.form["url"]
+    name = validate_and_normalize_url(url)
 
+    if name:
+        if url_exists(name):
+            flash("Страница уже существует", "danger")
+            return render_template("home.html", title="Анализатор страниц")
+
+        url_id = add_url_to_db(name)
+        flash("Страница успешно добавлена", "success")
+        return redirect(url_for("show_url", id=url_id))
+
+    flash("Некорректный URL", "danger")
+    return render_template("home.html", title="Анализатор страниц")
+
+
+
+# Получение списка URL
 @app.route("/urls", methods=["GET"])
 def get_urls():
-    with psycopg.connect(DATABASE_URL) as conn:
-        with conn.cursor() as cur:
-            cur.execute("SELECT * FROM urls ORDER BY created_at DESC")
-            urls = cur.fetchall()
-    return render_template("urls.html", urls=urls, title="Список страниц")
+    urls = select_urls()
+    return render_template(
+        "urls.html", urls=urls,
+        title="Список страниц"
+        )
 
 
 
-
+# Получение информации о конкретном URL
 @app.route("/urls/<int:id>", methods=["GET"])
 def show_url(id):
-    with psycopg.connect(DATABASE_URL) as conn:
-        with conn.cursor() as cur:
-            cur.execute(
-                "SELECT id, name, created_at FROM urls WHERE id = %s",
-                (id,)
-            )
-            url = cur.fetchone()
-        return render_template("url.html", url=url)
+    url = select_url_by_id(id)
+    return render_template("url.html", url=url)
+
+
+
 
 
 
