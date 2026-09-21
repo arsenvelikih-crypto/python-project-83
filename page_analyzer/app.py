@@ -30,9 +30,9 @@ def post_url():
     name = validate_and_normalize_url(url)
 
     if name:
-        if url_exists(name):
+        exists, existing_id = url_exists(name)
+        if exists:
             flash("Страница уже существует", "info")
-            _, existing_id = url_exists(name)
             return redirect(url_for("show_url", id=existing_id))
 
         url_id = add_url_to_db(name)
