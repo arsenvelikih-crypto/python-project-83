@@ -25,15 +25,33 @@
     <h2>Проверки</h2>
     
     <table data-test="checks" class="table w-100 border-collapse mt-2 w-full">
-    <button type="submit" class="btn btn-primary">Запустить проверку</button>
-        <tr class="border px-3 py-2">
-            <td class="border px-3 py-2">ID</td>
-            <td class="border px-3 py-2">Код ответа</td>
-            <td class="border px-3 py-2">h1</td>
-            <td class="border px-3 py-2">title</td>
-            <td class="border px-3 py-2">description</td>
-            <td class="border px-3 py-2">Дата создания</td>
+        <form method="post" action="{{ url_for('check_url', id=url[0]) }}">
+            <button type="submit" class="btn btn-primary">Запустить проверку</button>
+        </form>
+
+    <thead>
+        <tr>
+            <th class="border px-3 py-2">ID</th>
+            <th class="border px-3 py-2">Код ответа</th>
+            <th class="border px-3 py-2">h1</th>
+            <th class="border px-3 py-2">title</th>
+            <th class="border px-3 py-2">description</th>
+            <th class="border px-3 py-2">Дата проверки</th>
         </tr>
+    </thead>
+    <tbody>
+        {% for check in checks %}
+            <tr>
+                <td class="border px-3 py-2">{{ check[0] }}</td>
+                <td class="border px-3 py-2"> </td>
+                <td class="border px-3 py-2"> </td>
+                <td class="border px-3 py-2"> </td>
+                <td class="border px-3 py-2"> </td>
+                <td class="border px-3 py-2">{{ check[5] }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+        
     </table>
 </div>
 

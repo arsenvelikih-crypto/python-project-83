@@ -36,7 +36,15 @@ def url_exists(name):
 def select_urls():
     with get_connection() as conn:
         with conn.cursor() as cur:
-            cur.execute("SELECT * FROM urls ORDER BY created_at DESC")
+            cur.execute("""SELECT
+                urls.id AS url_id,
+                urls.name,
+                urls.created_at,
+                Max(url_checks.created_at) AS last_check
+            FROM urls 
+            LEFT JOIN url_checks ON urls.id = url_checks.url_id
+            GROUP BY urls.id, urls.name, urls.created_at
+            ORDER BY urls.created_at DESC""")
             return cur.fetchall()
 
 def select_url_by_id(url_id):
@@ -47,3 +55,24 @@ def select_url_by_id(url_id):
                 (url_id,)
             )
             return cur.fetchone()
+
+def add_url_check_to_db(url_id):
+    with get_connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                """INSERT INTO url_checks (url_id, status_code, h1, title, description, created_at) 
+                VALUES (%s, DEFAULT, DEFAULT, DEFAULT, DEFAULT, %s)""",
+                (url_id, datetime.now())
+            )
+        conn.commit()
+
+def select_url_checks_by_id(url_id):
+    with get_connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                """SELECT id, status_code, h1, title, description, created_at 
+                FROM url_checks WHERE url_id = %s 
+                ORDER BY created_at DESC""",
+                (url_id,)
+            )
+            return cur.fetchall()

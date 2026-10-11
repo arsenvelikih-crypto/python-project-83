@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container mt-1 p-1">
+<h1>Сайт: {{ url[1] }}</h1>
+<table data-test="url" class="table w-100 border-collapse mt-4 w-full">
+    <tbody>
+        <tr>
+            <th class="border px-3 py-2">ID</th>
+            <td class="border px-3 py-2">{{ url[0]}}</td>
+        </tr>
+        <tr>
+            <th class="border px-3 py-2">Имя</th>
+            <td class="border px-3 py-2">{{ url[1]}}</td>
+        </tr>
+        <tr>
+            <th class="border px-3 py-2">Дата создания</th>
+            <td class="border px-3 py-2">{{ url[2].strftime('%d.%m.%Y')}}</td>
+        </tr>
+    </tbody>
+</table>
+</div>
+<div class="container mt-1 p-1">
+    <h2>Проверки</h2>
+    
+    <table data-test="checks" class="table w-100 border-collapse mt-2 w-full">
+        <form method="post" action="{{ url_for('check_url', id=url[0]) }}">
+            <button type="submit" class="btn btn-primary">Запустить проверку</button>
+        </form>
+            <table data-test="checks" class="table w-100 border-collapse mt-2 w-full">
+        <form method="post" action="{{ url_for('check_url', id=url[0]) }}">
+            <button type="submit" class="btn btn-primary">Запустить проверку</button>
+        </form>
+
+    <thead>
+        <tr>
+            <th class="border px-3 py-2">ID</th>
+            <th class="border px-3 py-2">Код ответа</th>
+            <th class="border px-3 py-2">h1</th>
+            <th class="border px-3 py-2">title</th>
+            <th class="border px-3 py-2">description</th>
+            <th class="border px-3 py-2">Дата проверки</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for check in checks %}
+            <tr>
+                <td class="border px-3 py-2">{{ check[0] }}</td>
+                <td class="border px-3 py-2"> </td>
+                <td class="border px-3 py-2"> </td>
+                <td class="border px-3 py-2"> </td>
+                <td class="border px-3 py-2"> </td>
+                <td class="border px-3 py-2">{{ check[5] }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+        
+    </table>
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+</body>
+</html>
+
+{% endblock %}
