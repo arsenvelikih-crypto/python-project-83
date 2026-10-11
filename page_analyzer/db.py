@@ -60,7 +60,9 @@ def add_url_check_to_db(url_id):
     with get_connection() as conn:
         with conn.cursor() as cur:
             cur.execute(
-                """INSERT INTO url_checks (url_id, status_code, h1, title, description, created_at) 
+                """INSERT INTO url_checks (
+                url_id, status_code, h1, title, description, created_at
+                ) 
                 VALUES (%s, DEFAULT, DEFAULT, DEFAULT, DEFAULT, %s)""",
                 (url_id, datetime.now())
             )
