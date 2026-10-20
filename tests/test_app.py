@@ -1,5 +1,5 @@
 from  page_analyzer import app
-from unittest.mock import patch, Mock
+
 
 
 # Тестирование главной страницы
@@ -13,11 +13,14 @@ def test_index():
 def test_post_url():
     client = app.test_client()
     response = client.post("/urls", data={"url": "https://example.com"})
-    assert response.status_code == 302  # Переход на страницу с информацией о добавленном URL
+    # Переход на страницу с информацией о добавленном URL
+    assert response.status_code == 302
+
 
 # Тестирование добавления некорректного URL
 def test_post_invalid_url():
     client = app.test_client()
     response = client.post("/urls", data={"url": "invalid-url"})
-    assert response.status_code == 422  # Статус код 422 для некорректного URL
+    # Статус код 422 для некорректного URL
+    assert response.status_code == 422
     assert "Некорректный URL" in response.text
