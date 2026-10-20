@@ -40,7 +40,12 @@ def select_urls():
                 urls.id AS url_id,
                 urls.name,
                 urls.created_at,
-                Max(url_checks.created_at) AS last_check
+                Max(url_checks.created_at) AS last_check,
+                (SELECT status_code 
+                FROM url_checks 
+                WHERE url_checks.url_id = urls.id 
+                ORDER BY created_at DESC, id DESC 
+                LIMIT 1) AS last_status_code
             FROM urls 
             LEFT JOIN url_checks ON urls.id = url_checks.url_id
             GROUP BY urls.id, urls.name, urls.created_at
@@ -56,15 +61,16 @@ def select_url_by_id(url_id):
             )
             return cur.fetchone()
 
-def add_url_check_to_db(url_id):
+def add_url_check_to_db(url_id, status_code):
+
     with get_connection() as conn:
         with conn.cursor() as cur:
             cur.execute(
                 """INSERT INTO url_checks (
                 url_id, status_code, h1, title, description, created_at
                 ) 
-                VALUES (%s, DEFAULT, DEFAULT, DEFAULT, DEFAULT, %s)""",
-                (url_id, datetime.now())
+                VALUES (%s, %s, DEFAULT, DEFAULT, DEFAULT, %s)""",
+                (url_id, status_code, datetime.now())
             )
         conn.commit()
 

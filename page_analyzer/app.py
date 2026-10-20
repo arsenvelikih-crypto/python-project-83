@@ -16,6 +16,8 @@ from flask import (
     flash,
 )
 
+import requests
+
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = SECRET_KEY
@@ -73,10 +75,16 @@ def show_url(id):
 def check_url(id):
     # Здесь будет логика проверки URL
     try:
-        add_url_check_to_db(id)
+        url = select_url_by_id(id)
+        if not url:
+            flash("URL не найден", "danger")
+            return redirect(url_for("get_urls"))
+        response = requests.get(url[1], timeout=5)  # url[1] is the URL name
+        response.raise_for_status()     # Raise an error for bad responses
+        add_url_check_to_db(id, response.status_code)
         flash("Страница успешно проверена", "success")
-    except Exception:
-        flash("Произошла ошибка при проверке", "danger"), 
+    except requests.RequestException:
+        flash("Произошла ошибка при проверке", "danger") 
     return redirect(url_for("show_url", id=id)) 
 
 
