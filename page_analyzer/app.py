@@ -46,7 +46,7 @@ def post_url():
         return redirect(url_for("show_url", id=url_id))
 
     flash("Некорректный URL", "danger")
-    return render_template("home.html", title="Анализатор страниц")
+    return render_template("home.html", title="Анализатор страниц"), 422
 
 
 
@@ -74,9 +74,9 @@ def check_url(id):
     # Здесь будет логика проверки URL
     try:
         add_url_check_to_db(id)
-        flash("Страница успешно проверена", "info")
+        flash("Страница успешно проверена", "success")
     except Exception:
-        flash("Произошла ошибка при проверке", "danger")
+        flash("Произошла ошибка при проверке", "danger"), 
     return redirect(url_for("show_url", id=id)) 
 
 

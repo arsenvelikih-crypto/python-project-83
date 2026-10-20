@@ -17,3 +17,4 @@ htmlcov/
 .DS_Store
 *.tmp
 *.swp.python-version
+.python-version

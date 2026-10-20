@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS urls (
     created_at TIMESTAMP NOT NULL
 );
 
-# Таблица для хранения результатов проверок
+-- Таблица для хранения результатов проверок
 CREATE TABLE IF NOT EXISTS url_checks (
     id SERIAL PRIMARY KEY,
     url_id INTEGER REFERENCES urls(id) ON DELETE CASCADE,

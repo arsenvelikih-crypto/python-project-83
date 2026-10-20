@@ -3,6 +3,9 @@
 install:
 	uv sync
 
+setup: 
+	install
+
 dev:
 	uv run flask --debug --app page_analyzer:app run
 
