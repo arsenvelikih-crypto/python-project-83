@@ -1,6 +1,187 @@
-### Ссылка на проект:
-https://python-project-83-op6q.onrender.com
+::: {align="center"}
+# Page Analyzer
 
+**Веб-приложение для анализа веб-страниц и извлечения SEO-метаданных**
 
-### Hexlet tests and linter status:
-[![Actions Status](https://github.com/arsenvelikih-crypto/python-project-83/actions/workflows/hexlet-check.yml/badge.svg)](https://github.com/arsenvelikih-crypto/python-project-83/actions)
+[Открыть приложение](https://python-project-83-op6q.onrender.com)
+
+------------------------------------------------------------------------
+
+## О проекте
+
+**Page Analyzer** --- веб-приложение, которое позволяет добавлять сайты,
+проверять доступность страниц и просматривать основные SEO-данные,
+полученные из HTML.
+
+После добавления URL можно запустить проверку. Приложение отправляет
+HTTP-запрос, анализирует HTML-ответ и сохраняет результат в PostgreSQL.
+
+## Возможности
+
+-   Добавление сайтов по URL.
+-   Проверка и нормализация введённого адреса.
+-   Просмотр списка добавленных сайтов.
+-   Запуск проверки доступности страницы.
+-   Получение HTTP-статуса ответа.
+-   Извлечение основных SEO-данных:
+    -   `h1` --- основной заголовок страницы;
+    -   `title` --- заголовок HTML-документа;
+    -   `description` --- метаописание страницы.
+-   Обрезка длинных значений до установленного ограничения.
+-   Сохранение истории проверок для каждого сайта.
+
+## Технологии
+
+  Технология         Назначение
+  ------------------ -----------------------------------------
+  Python 3.14        Основной язык
+  Flask              Веб-фреймворк
+  PostgreSQL         Хранение данных
+  Psycopg 3          Подключение к PostgreSQL
+  Requests           HTTP-запросы
+  Beautiful Soup 4   Разбор HTML и извлечение данных
+  Jinja2             HTML-шаблоны
+  uv                 Управление зависимостями и окружением
+  Gunicorn           WSGI-сервер
+  Ruff               Проверка качества и форматирование кода
+  Pytest             Тестирование
+
+## Требования
+
+Для локального запуска понадобятся:
+
+-   Python `>=3.14, <3.15`;
+-   [uv](https://docs.astral.sh/uv/);
+-   PostgreSQL.
+
+## Установка и запуск
+
+### 1. Клонирование репозитория
+
+``` bash
+git clone https://github.com/arsenvelikih-crypto/python-project-83.git
+cd python-project-83
+```
+
+### 2. Установка зависимостей
+
+``` bash
+make install
+```
+
+Команда `make install` выполняет `uv sync`: создаёт виртуальное
+окружение при необходимости и устанавливает зависимости проекта.
+
+### 3. Настройка PostgreSQL
+
+Создайте базу данных:
+
+``` bash
+createdb page_analyzer
+```
+
+Создайте в корне проекта файл `.env` и укажите параметры подключения:
+
+``` env
+DATABASE_URL=postgresql://username:password@localhost:5432/page_analyzer
+SECRET_KEY=your-secret-key
+```
+
+Замените `username`, `password` и `your-secret-key` на собственные
+значения.
+
+### 4. Создание таблиц
+
+Из корневой директории проекта выполните:
+
+``` bash
+psql "$DATABASE_URL" -f database.sql
+```
+
+Скрипт создаёт две таблицы:
+
+-   `urls` --- список добавленных сайтов;
+-   `url_checks` --- результаты проверок. Каждая проверка связана с
+    сайтом через внешний ключ `url_id`.
+
+### 5. Запуск приложения
+
+Для запуска в режиме разработки:
+
+``` bash
+make dev
+```
+
+Для запуска через Gunicorn:
+
+``` bash
+make start
+```
+
+По умолчанию приложение будет доступно по адресу:
+
+<http://localhost:8000>
+
+Порт можно изменить, передав переменную `PORT`:
+
+``` bash
+make start PORT=8080
+```
+
+## Команды Makefile
+
+  Команда          Назначение
+  ---------------- ----------------------------------------
+  `make install`   Установка зависимостей через `uv sync`
+  `make dev`       Запуск Flask в режиме разработки
+  `make start`     Запуск приложения через Gunicorn
+  `make build`     Выполнение скрипта сборки проекта
+  `make lint`      Проверка кода с помощью Ruff
+  `make test`      Запуск тестов Pytest
+
+Дополнительные команды Ruff:
+
+``` bash
+# Автоматически исправить поддерживаемые замечания
+uv run ruff check . --fix
+
+# Отформатировать код
+uv run ruff format .
+
+# Проверить форматирование без изменений
+uv run ruff format --check .
+```
+
+## Структура проекта
+
+``` text
+python-project-83/
+├── .github/
+│   └── workflows/       # CI и автоматические проверки
+├── page_analyzer/
+│   ├── templates/       # HTML-шаблоны
+│   ├── app.py           # Flask-приложение и маршруты
+│   ├── config.py        # Настройки приложения
+│   ├── db.py            # Работа с PostgreSQL
+│   └── url_validate.py  # Проверка URL и обработка текста
+├── tests/               # Автоматические тесты
+├── database.sql         # SQL-схема базы данных
+├── Makefile             # Команды для разработки и запуска
+├── build.sh             # Скрипт сборки
+├── pyproject.toml       # Настройки проекта и зависимости
+├── uv.lock              # Зафиксированные версии зависимостей
+└── README.md
+```
+
+## Автор
+
+**Arsen**
+
+-   GitHub:
+    [@arsenvelikih-crypto](https://github.com/arsenvelikih-crypto)
+-   Проект:
+    [python-project-83](https://github.com/arsenvelikih-crypto/python-project-83)
+
+------------------------------------------------------------------------
+
+Проект создан в рамках обучения на [Hexlet](https://hexlet.io/).
