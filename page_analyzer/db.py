@@ -7,32 +7,31 @@ def get_connection():
     return psycopg.connect(DATABASE_URL)
 
 
+# Добавление URL в базу данных
 def add_url_to_db(name):
     with get_connection() as conn:
         with conn.cursor() as cur:
             cur.execute(
                 """INSERT INTO urls (name, created_at) 
                 VALUES (%s, %s) RETURNING id""",
-                (name, datetime.now())
+                (name, datetime.now()),
             )
             url_id = cur.fetchone()[0]
         conn.commit()
     return url_id
 
 
+# Проверка существования URL в базе данных
 def url_exists(name):
     with get_connection() as conn:
         with conn.cursor() as cur:
-            cur.execute(
-                "SELECT id FROM urls WHERE name = %s",
-                (name,)
-            )
+            cur.execute("SELECT id FROM urls WHERE name = %s", (name,))
             existing_url = cur.fetchone()
             existing_id = existing_url[0] if existing_url else None
     return existing_url is not None, existing_id
 
 
-
+# Получение списка всех URL из базы данных
 def select_urls():
     with get_connection() as conn:
         with conn.cursor() as cur:
@@ -52,16 +51,19 @@ def select_urls():
             ORDER BY urls.created_at DESC""")
             return cur.fetchall()
 
+
+# Получение информации о конкретном URL
 def select_url_by_id(url_id):
     with get_connection() as conn:
         with conn.cursor() as cur:
             cur.execute(
-                "SELECT id, name, created_at FROM urls WHERE id = %s",
-                (url_id,)
+                "SELECT id, name, created_at FROM urls WHERE id = %s", (url_id,)
             )
             return cur.fetchone()
 
-def add_url_check_to_db(url_id, status_code):
+
+# Добавление информации о проверке URL в базу данных
+def add_url_check_to_db(url_id, status_code, h1, title, description):
 
     with get_connection() as conn:
         with conn.cursor() as cur:
@@ -69,11 +71,13 @@ def add_url_check_to_db(url_id, status_code):
                 """INSERT INTO url_checks (
                 url_id, status_code, h1, title, description, created_at
                 ) 
-                VALUES (%s, %s, DEFAULT, DEFAULT, DEFAULT, %s)""",
-                (url_id, status_code, datetime.now())
+                VALUES (%s, %s, %s, %s, %s, %s)""",
+                (url_id, status_code, h1, title, description, datetime.now()),
             )
         conn.commit()
 
+
+# Получение информации о проверках конкретного URL
 def select_url_checks_by_id(url_id):
     with get_connection() as conn:
         with conn.cursor() as cur:
@@ -81,6 +85,6 @@ def select_url_checks_by_id(url_id):
                 """SELECT id, status_code, h1, title, description, created_at 
                 FROM url_checks WHERE url_id = %s 
                 ORDER BY created_at DESC""",
-                (url_id,)
+                (url_id,),
             )
             return cur.fetchall()
