@@ -4,7 +4,7 @@ install:
 	uv sync
 
 setup: 
-	install
+	$(MAKE) install
 
 dev:
 	uv run flask --debug --app page_analyzer:app run
