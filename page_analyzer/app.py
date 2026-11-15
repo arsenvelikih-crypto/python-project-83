@@ -1,4 +1,5 @@
-from .url_validate import validate_and_normalize_url, truncate_text
+from .url_validate import validate_and_normalize_url
+from .utils import truncate_text
 from .db import (
     select_urls,
     select_url_by_id,
